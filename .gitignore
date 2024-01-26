@@ -30,3 +30,4 @@ bin/
 run/
 *.log
 output/
+config.json
