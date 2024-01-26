@@ -41,6 +41,7 @@ suspend fun main() {
         logger.error("Invalid config file")
         exitProcess(1)
     }
+    logger.info("Starting Palworld Server Companion")
     val rcon = createRcon(config.serverHost, config.rconPort, config.rconPassword)
     suspend fun Rcon.connect() =
         connectSuspend(config.serverHost, config.rconPort, config.rconPassword)
