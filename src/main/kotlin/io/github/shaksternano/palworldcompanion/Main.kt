@@ -99,6 +99,7 @@ suspend fun restartServer(config: Config, rcon: Rcon) {
             minutes(
                 10,
                 5,
+                3,
                 1,
             ) + seconds(
                 30,
