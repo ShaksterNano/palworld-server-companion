@@ -42,9 +42,19 @@ suspend fun main() {
         exitProcess(1)
     }
     logger.info("Starting Palworld Server Companion")
-    val rcon = createRcon(config.serverHost, config.rconPort, config.rconPassword)
-    suspend fun Rcon.connect() =
-        connectSuspend(config.serverHost, config.rconPort, config.rconPassword)
+    logger.info("Connecting to server...")
+    lateinit var rcon: Rcon
+    var connected = false
+    while (!connected) {
+        runCatching {
+            rcon = createRcon(config.serverHost, config.rconPort, config.rconPassword)
+            connected = true
+        }.getOrElse {
+            logger.error("Failed to connect to server, trying again in 10 seconds", it)
+            delay(10.seconds)
+        }
+    }
+    logger.info("Connected to server")
     while (true) {
         val memoryUsagePercentage = getMemoryUsagePercentage()
         var restarted = false
@@ -60,7 +70,7 @@ suspend fun main() {
         delay(config.checkIntervalMinutes.minutes)
         if (restarted) {
             runCatching {
-                rcon.connect()
+                rcon.connectSuspend(config.serverHost, config.rconPort, config.rconPassword)
             }.getOrElse {
                 logger.error("Failed to reconnect to server", it)
             }
