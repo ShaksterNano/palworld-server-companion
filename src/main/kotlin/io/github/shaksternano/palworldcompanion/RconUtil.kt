@@ -45,7 +45,7 @@ private class RetryingRcon(
         runCatching {
             super.command(payload)
         }.getOrElse { t ->
-            logger.error("Error while executing command", t)
+            logger.error("Error while executing command: $payload", t)
             runCatching {
                 disconnect()
             }.getOrElse {

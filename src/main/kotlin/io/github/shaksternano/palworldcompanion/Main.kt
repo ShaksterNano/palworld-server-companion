@@ -92,6 +92,7 @@ suspend fun getMemoryUsagePercentage(): Double {
 }
 
 suspend fun restartServer(config: Config, rcon: Rcon) {
+    logger.info("Restarting serving in 10 minutes")
     runCatching {
         restartSequence(
             rcon,
@@ -138,26 +139,8 @@ suspend fun restartSequence(rcon: Rcon, warningIntervals: List<Pair<Duration, Du
     warningIntervals.windowed(size = 2, step = 1, partialWindows = true).forEach {
         val (duration, timeUnit) = it[0]
         when (timeUnit) {
-            DurationUnit.MINUTES -> {
-                val minutes = duration.inWholeMinutes.toInt()
-                var message = "Restarting server in $minutes minute"
-                if (minutes != 1) {
-                    message += "s"
-                }
-                logger.info(message)
-                rcon.broadcastRestartMinutes(minutes)
-            }
-
-            DurationUnit.SECONDS -> {
-                val seconds = duration.inWholeSeconds.toInt()
-                var message = "Restarting server in $seconds second"
-                if (seconds != 1) {
-                    message += "s"
-                }
-                logger.info(message)
-                rcon.broadcastRestartSeconds(seconds)
-            }
-
+            DurationUnit.MINUTES -> rcon.broadcastRestartMinutes(duration.inWholeMinutes.toInt())
+            DurationUnit.SECONDS -> rcon.broadcastRestartSeconds(duration.inWholeSeconds.toInt())
             else -> {}
         }
         val nextWarningDuration = if (it.size == 2) {
