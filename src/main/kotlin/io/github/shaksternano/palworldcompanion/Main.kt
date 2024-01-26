@@ -55,6 +55,8 @@ suspend fun main() {
         }
     }
     logger.info("Connected to server")
+    val infoMessage = rcon.commandSuspend("info").trim()
+    logger.info(infoMessage)
     while (true) {
         val memoryUsagePercentage = getMemoryUsagePercentage()
         var restarted = false
