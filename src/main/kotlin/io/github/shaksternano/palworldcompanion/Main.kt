@@ -50,7 +50,7 @@ suspend fun main() {
             rcon = createRcon(config.serverHost, config.rconPort, config.rconPassword)
             connected = true
         }.getOrElse {
-            logger.error("Failed to connect to server, trying again in 10 seconds", it)
+            logger.error("Failed to connect to server, trying again in 10 seconds")
             delay(10.seconds)
         }
     }
