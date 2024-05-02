@@ -86,7 +86,12 @@ suspend fun isRootUser(): Boolean {
 }
 
 suspend fun getMemoryUsagePercentage(): Double {
-    val serverPid = runCommand("pidof", "PalServer-Linux-Test")
+    val processName = "PalServer-Linux-Shipping"
+    val serverPid = runCommand("pidof", processName)
+    serverPid.ifBlank {
+        logger.error("Server process $processName not found")
+        exitProcess(1)
+    }
     val memoryUsageMessage = runCommand("ps", "-p", serverPid, "-o", "%mem")
     return memoryUsageMessage.split("\n")[1].toDouble()
 }
